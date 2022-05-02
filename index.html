@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        button {
+            display: block;
+            margin: 50px auto 20px auto;
+            padding: 10px;
+            font-weight: bold;
+            font-size: 1em;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: auto;
+            display: grid;
+            gap: 1px;
+            justify-content: center;
+        }
+
+        .container div {
+            border: solid 1px black;
+        }
+    </style>
+</head>
+
+<body>
+    <button>Start</button>
+    <script>
+
+        // how it works: the user starts with a blank page with a button, when clicked, it prompt the user to enter a number, then a grid with that number of columns and rows appear.
+        // when the user hover over a square, it turns black.
+        // when the user click again on the button, the grid is removed, and the process start from the beginning.
+
+        let height;
+        body = document.querySelector('body')
+        button = document.querySelector('button')
+        button.addEventListener('click', initiate)
+        function initiate() {
+            if ((typeof container) !== 'undefined') body.removeChild(container);
+            n = +prompt('enter the number of squares on each side');
+            container = document.createElement('div')
+            container.classList.add('container')
+            body.appendChild(container)
+            container.style.setProperty('grid-template-columns', `repeat(${n}, 1fr)`);
+            if (n > 0 && n < 100) {
+                n *= n;
+                for (i = 1; i <= n; i++) {
+                    div = document.createElement('div');
+                    container.appendChild(div);
+                    if (i===n) { // this one makes the divs have the same height as their width, to form a square
+                        height = window.getComputedStyle(div).getPropertyValue('width');
+                        container.style.setProperty('grid-auto-rows', `${height}`);
+                    }
+                }
+            }
+            div = document.querySelectorAll('.container div')
+            div.forEach(y => y.addEventListener('mouseenter', y => y.currentTarget.style.backgroundColor = generateColor(y)))
+        }
+        function generateColor(y) {
+            // two cases: if it already have a color, make it 10% darker, otherwise generate a random one
+            if (y.currentTarget.style.backgroundColor == '') {
+                gen = function() { return Math.floor(Math.random() * 256) }
+                return `rgb(${gen()}, ${gen()}, ${gen()})`
+            }
+            else {
+                let array = y.currentTarget.style.backgroundColor.slice(4, -1)
+                array = array.split(',')
+                /* array.forEach(z => {let n = z * 10/100; if(n > 255) this = 255; else this = n})*/
+                for (i=0; i<(array.length); i++) {
+                    let n = array[i] - Math.floor(10 / 100 * 256);
+                    console.log('original value is ' + array[i] + ', and the new value is ' + n)
+                    if (n<0) array[i] = 0;
+                    else array[i] = n;
+                }
+                array = `rgb(${array.toString()})`
+                console.log(array)
+                return array
+            }
+        }
+    </script>
+</body>
+
+</html>
